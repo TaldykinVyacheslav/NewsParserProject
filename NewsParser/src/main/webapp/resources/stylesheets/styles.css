@@ -1,0 +1,100 @@
+body {
+  position: relative;
+  background-color: #94b1ba;
+}
+h6 {
+  top: 0%;
+  width: 100%;
+  left: 0%;
+  height: 15%;
+  text-decoration: none;
+  font-family: verdana;
+  font-size: 50px;
+  color: #F4F4F4;
+  text-align: center;
+  background-color: #4f7191;
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#4f7191),to(#a9bdd0));
+  background-image: -webkit-linear-gradient(top,#4f7191,#a9bdd0);
+  background-image: -moz-linear-gradient(top,#4f7191,#a9bdd0);
+  background-image: -ms-linear-gradient(top,#4f7191,#a9bdd0);
+  background-image: -o-linear-gradient(top,#4f7191,#a9bdd0);
+  background-image: -ch-linear-gradient(top,#4f7191,#a9bdd0);
+  background-image: -linear-gradient(top,#4f7191,#a9bdd0);
+  filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr = '@col' , EndColorStr = '@col2'";
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr = '@col' , EndColorStr = '@col2'";
+}
+div#mainPanel p {
+  position: fixed;
+  text-decoration: none;
+  top: 25%;
+  left: 0%;
+  width: 15%;
+  height: 30px;
+  font-size: 20px;
+  font-family: verdana;
+}
+div#mainPanel select {
+  position: fixed;
+  top: 25%;
+  left: 6%;
+  width: 15%;
+  height: 70px;
+  font-size: 14px;
+  font-family: verdana;
+}
+div#mainPanel a {
+  position: fixed;
+  top: 25%;
+  left: 21.5%;
+  width: 70px;
+  height: 70px;
+  font-size: 14px;
+  font-family: verdana;
+}
+div#mainPanel button {
+  position: fixed;
+  left: 8%;
+  font-family: verdana;
+  font-size: 30px;
+  padding: 15px 30px;
+  background-color: #bebebe;
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#bebebe),to(#ffffff));
+  background-image: -webkit-linear-gradient(top,#bebebe,#ffffff);
+  background-image: -moz-linear-gradient(top,#bebebe,#ffffff);
+  background-image: -ms-linear-gradient(top,#bebebe,#ffffff);
+  background-image: -o-linear-gradient(top,#bebebe,#ffffff);
+  background-image: -ch-linear-gradient(top,#bebebe,#ffffff);
+  background-image: -linear-gradient(top,#bebebe,#ffffff);
+  filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr = '@col' , EndColorStr = '@col2'";
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr = '@col' , EndColorStr = '@col2'";
+}
+div#mainPanel button:hover {
+  background-color: #ffffff;
+  background-image: -webkit-gradient(linear,left top,left bottom,from(#ffffff),to(#bebebe));
+  background-image: -webkit-linear-gradient(top,#ffffff,#bebebe);
+  background-image: -moz-linear-gradient(top,#ffffff,#bebebe);
+  background-image: -ms-linear-gradient(top,#ffffff,#bebebe);
+  background-image: -o-linear-gradient(top,#ffffff,#bebebe);
+  background-image: -ch-linear-gradient(top,#ffffff,#bebebe);
+  background-image: -linear-gradient(top,#ffffff,#bebebe);
+  filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr = '@col' , EndColorStr = '@col2'";
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr = '@col' , EndColorStr = '@col2'";
+}
+div#textAreaWithAudio textarea {
+  font-family: verdana;
+  position: absolute;
+  top: 30%;
+  left: 35%;
+  min-width: 60%;
+  max-width: 60%;
+  width: 60%;
+  height: 45%;
+}
+div#textAreaWithAudio div#audio audio {
+  font-family: verdana;
+  position: fixed;
+  top: 55%;
+  left: 0%;
+  width: 30%;
+  height: 5%;
+}

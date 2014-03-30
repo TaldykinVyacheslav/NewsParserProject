@@ -1,6 +1,6 @@
 package com.byelex.newsparser.web;
 
-import DBManager.Get;
+import com.byelex.newsparser.DBManager.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,20 +30,19 @@ public class MainPageController {
         Map<String, String> reportMap;
         int profileID;
 
-        report = new StringBuilder();
         profileID = Integer.valueOf(requestParams.get("profileID"));
-        profileTemplate = Get.getProfile(Long.valueOf(profileID)).getText();
+        /*profileTemplate = Get.getProfile(Long.valueOf(profileID)).getText();
         reportMap = Get.createReport(Get.getProfile(Long.valueOf(profileID)).getText());
         for(Map.Entry<String, String> reportEntry : reportMap.entrySet()) {
             if(reportEntry.getKey().equals("Robbery")) {
                 report.append(reportEntry.getKey() + ":\n");
                 report.append(reportEntry.getValue() + "\n");
             }
-        }
+        }*/
 
         redirectAttributes.addFlashAttribute("selectedProfileID", profileID);
 
-        redirectAttributes.addFlashAttribute("resultText", report);
+        redirectAttributes.addFlashAttribute("resultText", Get.getFullReport(Get.getProfile((long)profileID)));
         return "redirect:/index";
     }
 

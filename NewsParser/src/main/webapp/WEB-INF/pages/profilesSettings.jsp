@@ -8,39 +8,21 @@
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <html>
+
 <head>
-    <link rel="stylesheet" type="text/css" href="/resources/stylesheets/style.css"/>
+    <link rel="stylesheet" type="text/css" href="/resources/stylesheets/styles2.css"/>
     <link rel="stylesheet" type="text/css" href="/resources/stylesheets/profilesSettings.css"/>
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="/resources/scripts/profilesSettings.js"></script>
     <div id="#templateScript">
         <script>
             $( document ).ready(function() {
-                $('#eventSelect').data('previousEventID', 1);
-
-                $("#templateField").on('keydown keyup', function (e) {
-                    adaptiveheight(this);
+                $("#profileSelect").on('change', function (e) {
+                    var editLink = document.getElementById("editLink");
+                    var deleteLink = document.getElementById("deleteLink");
+                    editLink.href = editLink.href.substring(0, editLink.href.lastIndexOf('edit/') + 5) + $("#profileSelect").val() + '/';
+                    deleteLink.href = deleteLink.href.substring(0, deleteLink.href.lastIndexOf('delete/') + 7) + $("#profileSelect").val() + '/';
                 });
-
-                $("#templateField").trigger('keyup');
-
-                $("#eventSelect").on('change', function (e) {
-                    var templateText;
-                    var eventID;
-                    eventID = $('#eventSelect').find(":selected").val();
-
-                    $.data(this, 'previousEventID', eventID);
-                });
-            })
-
-            function adaptiveheight(a) {
-                $(a).height(0);
-                var scrollval = $(a)[0].scrollHeight;
-                $(a).height(scrollval);
-                if (parseInt(a.style.height) > $(window).height()) {
-                    $(document).scrollTop(parseInt(a.style.height));
-                }
-            }
+            });
         </script>
     </div>
     <title>
@@ -48,67 +30,89 @@
     </title>
 </head>
 <body>
-<h2>
+<h6>
     Profile settings
-</h2>
-<table>
+</h6>
+<table id="allInTable">
     <div class="center">
     <tr>
         <td>
-            <label name="profile">
-                profile:
-            </label>
+            <p name="profile">
+                Profile:
+            </p>
         </td>
-        <td>
-            <select id="profileSelect" class="settingSelect" name="profileID">
+        <td id="mainLinks">
+            <select multiple id="profileSelect" class="settingSelect" name="profileID">
                 <c:if test="${!empty profileList}">
                     <c:forEach items="${profileList}" var="profileVar">
-                        <c:choose>
-                            <c:when test="${profileVar.id == currentProfile.id}">
-                                <option value="${profileVar.id}" selected>${profileVar.name}</option>
-                            </c:when>
-                            <c:otherwise>
-                                <option value="${profileVar.id}">${profileVar.name}</option>
-                            </c:otherwise>
-                        </c:choose>
+                        <option value="${profileVar.id}">${profileVar.name}</option>
                     </c:forEach>
                 </c:if>
             </select>
             <a id=addLink href=<c:url value="/settings/add"/>><img
                     src="/resources/images/plus2.png"
                     alt="Add profile"
-                     title="Add profile"/></a>
+                     title="Add profile"
+                     width="70" height="70"
+                    /></a>
             <a id=deleteLink href=<c:url value="/settings/delete/${currentProfile.id}"/>><img
                     src="/resources/images/minus.png"
                     alt="Remove profile"
-                     title="Remove profile"/></a>
+                     title="Remove profile"
+                     width="70" height="70"
+                    /></a>
             <a id=editLink href=<c:url value="/settings/edit/${currentProfile.id}"/>><img
                     src="/resources/images/edit.png"
                     alt="Edit profile"
-                    title="Edit profile"/></a>
+                    title="Edit profile"
+                    width="70" height="70"
+                    /></a>
         </td>
         <td>
 
         </td>
     </tr>
     </div>
-    <tr class="templateRow">
-        <td>
-            <label name="template">
-                template:
-            </label>
-        </td>
-        <div class="heightByContent">
-            <td>
-                <textarea id="templateField"
-                          readonly="true"
-                          class="heightByContent"
-                          name="template"
-                          placeholder="Type template text here">${templateText}</textarea>
-            </td>
-        </div>
-    </tr>
 </table>
-<p><a href="<c:url value="/index"/>">Home page</a></p>
+<br/>
+<p style="color: red">${errorMessage}</p>
+<p style="color: lawngreen">${infoMessage}</p>
+<div id="homePage">
+    <p><a href=<c:url value="/index"/>>
+        <img name="imageSome" src="/resources/images/retHome.png" width="70" height="70"
+             onMouseOver="return changeImage()"
+             onMouseOut= "return changeImageBack()"
+             onMouseDown="return handleMDown()"
+             onMouseUp="return handleMUp()"
+             id="someSettings"></a>Return to Home Page </p>
+    <script language="JavaScript">
+        upImage = new Image();
+        upImage.src = "/resources/images/retHomeu.png";
+        downImage = new Image();
+        downImage.src = "/resources/images/retHomed.png"
+        normalImage = new Image();
+        normalImage.src = "/resources/images/retHome.png";
+        function changeImage()
+        {
+            document.images["imageSome"].src= upImage.src;
+            return true;
+        }
+        function changeImageBack()
+        {
+            document.images["imageSome"].src = normalImage.src;
+            return true;
+        }
+        function handleMDown()
+        {
+            document.images["imageSome"].src = downImage.src;
+            return true;
+        }
+        function handleMUp()
+        {
+            changeImage();
+            return true;
+        }
+    </script>
+</div>
 </body>
 </html>

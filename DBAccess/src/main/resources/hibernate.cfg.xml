@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost/localdata</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">jigurda</property>
+        <property name="show_sql">true</property>
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.current_session_context_class">thread</property>
+
+        <mapping class="com.byelex.newsparser.Models.Publication" />
+        <mapping class="com.byelex.newsparser.Models.Opencalaistag" />
+        <mapping class="com.byelex.newsparser.Models.Publicationtags" />
+        <mapping class="com.byelex.newsparser.Models.Profile"/>
+        <mapping class="com.byelex.newsparser.Models.Token"/>
+        <mapping class="com.byelex.newsparser.Models.Event"/>
+        <mapping class="com.byelex.newsparser.Models.Template"/>
+    </session-factory>
+</hibernate-configuration>

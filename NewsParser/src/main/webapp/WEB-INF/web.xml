@@ -5,6 +5,9 @@
 
 	<display-name>News parser</display-name>
 
+    <!--<session-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>-->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
@@ -15,6 +18,7 @@
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
+
 
     <servlet>
 		<servlet-name>mvc-dispatcher</servlet-name>
