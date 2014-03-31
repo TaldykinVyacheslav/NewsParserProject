@@ -17,19 +17,27 @@ import java.util.Map;
  * @version 1.00 31.01.14 13:40
  */
 @Controller
-@RequestMapping("/settings")
-public class ProfileSettingsController {
+public class NewsParserController {
 
     @ResponseStatus(value = HttpStatus.OK)
     @RequestMapping("/")
-    public String mainSettingsController(Map<String, Object> map) {
+    public String mainController(Map<String, Object> map) {
+        return "redirect:/index";
+    }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @RequestMapping("/index")
+    public String indexController(Map<String, Object> map) {
         map.put("profile", new Profile());
         map.put("profileList", Get.listProfiles());
         if(map.get("currentProfile") == null) {
             map.put("currentProfile"
                     , Get.getProfile(1L));
         }
-        return "profilesSettings";
+        if(map.get("selectedProfileID") == null) {
+            map.put("selectedProfileID", 1);
+        }
+        return "main-form";
     }
 
     @RequestMapping(value = "/profile/{profileID}", method = RequestMethod.GET)
@@ -38,7 +46,7 @@ public class ProfileSettingsController {
         redirectAttributes.addFlashAttribute("currentProfile"
                 , Get.getProfile(Long.valueOf(profileID)));
         //redirectAttributes.addFlashAttribute("templateText", Get.getProfile(Long.valueOf(profileID)).getText());
-        return "redirect:/settings/";
+        return "redirect:/index";
     }
 
     @RequestMapping(value="/add", method=RequestMethod.GET)
@@ -55,9 +63,6 @@ public class ProfileSettingsController {
             template.setEvent(event);
             template.setProfile(profile);
             template.setEventText("");
-            /*System.out.println("EVENT ID = " + event.getId());
-            System.out.println("TEMPLATE PROFILE ID = " + template.getProfile().getId());
-            System.out.println("TEMPLATE EVENT ID = " + template.getEvent().getId());*/
             templates.add(template);
         }
 
@@ -75,7 +80,7 @@ public class ProfileSettingsController {
         for(Template template : profile.getTemplates()) {
             System.out.println("POST ADD METHOD EVENT: " + template.getEvent());
         }
-        return "redirect:/settings/";
+        return "redirect:/index";
     }
 
     @RequestMapping(value = "/edit/{profileID}", method = RequestMethod.GET)
@@ -94,11 +99,7 @@ public class ProfileSettingsController {
     public String editTemplatePost(@ModelAttribute Profile profile
             , @PathVariable("profileID") Long profileID) {
         Get.updateProfile(profile, Get.listEvents(), profileID);
-        /*for(Template template : profile.getTemplates()) {
-            System.out.println(template.getId());
-        }*/
-        //System.out.println("PROFILE NAME: " + profile.getName());
-        return "redirect:/settings/";
+        return "redirect:/index";
     }
 
     @RequestMapping(value = "/delete/{profileID}"
@@ -110,7 +111,18 @@ public class ProfileSettingsController {
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "You cannot delete this profile!");
         }
-        return "redirect:/settings/";
+        return "redirect:/index";
+    }
+
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public String search(@RequestParam Map<String,String> requestParams, RedirectAttributes redirectAttributes) {
+        int profileID;
+
+        profileID = Integer.valueOf(requestParams.get("profileID"));
+        redirectAttributes.addFlashAttribute("selectedProfileID", profileID);
+        redirectAttributes.addFlashAttribute("resultText", Get.getFullReport(Get.getProfile((long)profileID)));
+        System.out.println("SEARCH CONTROLLER! profileID = " + profileID);
+        return "redirect:/index";
     }
 }
 

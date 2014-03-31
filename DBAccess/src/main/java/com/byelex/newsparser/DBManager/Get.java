@@ -1,5 +1,9 @@
 package com.byelex.newsparser.DBManager;
 
+// предоставление ссылок на Buzztalk
+//todo звук
+// то что читается, выделяется
+
 import com.byelex.newsparser.Models.*;
 
 import java.text.ParseException;
@@ -27,119 +31,74 @@ import org.joda.time.Weeks;
  * To change this template use File | Settings | File Templates.
  */
 public class Get {
-    public static List<Publication> getPublication()
-    {
-        Transaction t;
-        Configuration cfg;
-        SessionFactory factory;
-        Session session;
-        Query query;
+    public static Transaction t;
+    public static Configuration cfg;
+    public static SessionFactory factory;
+    public static Session session;
+    public static Query query;
 
+    static {
         cfg = new Configuration();
         cfg.configure("hibernate.cfg.xml");
         factory = cfg.buildSessionFactory();
         session = factory.openSession();
-        t = session.beginTransaction();
+    }
 
+    public static List<Publication> getPublication()
+    {
+        t = session.beginTransaction();
         query = session.createQuery("from Publication ");
         java.util.List<Publication> list = query.list();
         t.commit();
-        session.close();
+        session.flush();
+        session.clear();
         return list;
     }
 
     public static List<Token> listTokens() {
-        Configuration cfg;
-        SessionFactory factory;
-        Transaction t;
-        Session session;
-        Query query;
-
-        cfg = new Configuration();
-        cfg.configure("hibernate.cfg.xml");// populates the data of the
-        factory = cfg.buildSessionFactory();
-        session = factory.openSession();
         t = session.beginTransaction();
-
         query = session.createQuery("from Token ");
         java.util.List<Token> list = query.list();
         t.commit();
-        session.close();
+        session.flush();
+        session.clear();
         return list;
     }
 
     public static List<Profile> listProfiles() {
-        Configuration cfg;
-        SessionFactory factory;
-        Transaction t;
-        Session session;
-        Query query;
-
-        cfg = new Configuration();
-        cfg.configure("hibernate.cfg.xml");// populates the data of the
-        factory = cfg.buildSessionFactory();
-        session = factory.openSession();
         t = session.beginTransaction();
-
         query = session.createQuery("from Profile ");
         java.util.List<Profile> list = query.list();
         t.commit();
-        session.close();
+        session.flush();
+        session.clear();
         return list;
     }
 
     public static List<Event> listEvents() {
-        Configuration cfg;
-        SessionFactory factory;
-        Session session;
-        Transaction t;
-        Query query;
         List<Event> list;
-
-        cfg = new Configuration();
-        cfg.configure("hibernate.cfg.xml");
-        factory = cfg.buildSessionFactory();
-        session = factory.openSession();
         t = session.beginTransaction();
         query = session.createQuery("from Event ");
         list = query.list();
         t.commit();
-        session.close();
+        session.flush();
+        session.clear();
         return list;
     }
 
     public static Profile getProfile(Long id) {
         Profile profile;
-        Configuration cfg = new Configuration();
-        cfg.configure("hibernate.cfg.xml");// populates the data of the
-        // configuration file
-
-        // creating seession factory object
-        SessionFactory factory = cfg.buildSessionFactory();
-
-        // creating session object
-        Session session = factory.openSession();
-
-        // creating transaction object
-        Transaction t = session.beginTransaction();
-
+        t = session.beginTransaction();
         profile = (Profile)session.get(Profile.class, id);
         t.commit();
-        session.close();
+        session.flush();
+        session.clear();
         return profile;
     }
 
     public static void updateProfile(Profile profile, List<Event> events, Long profileId) {
-        Configuration cfg;
         Query updateQuery;
-        SessionFactory factory;
-        Session session;
-        Transaction t;
 
-        cfg = new Configuration();
-        cfg.configure("hibernate.cfg.xml");
-        factory = cfg.buildSessionFactory();
-        session = factory.openSession();
         t = session.beginTransaction();
         Iterator<Event> eventIterator = events.iterator();
         Iterator<Template> templateIterator = profile.getTemplates().iterator();
@@ -167,23 +126,15 @@ public class Get {
 
         t.commit();
         session.flush();
-        session.close();
+        session.clear();
     }
 
     public static void addProfile(Profile profile, List<Event> events) {
-        Configuration cfg;
         Query updateQuery;
-        SessionFactory factory;
-        Session session;
-        Transaction t;
-
-        cfg = new Configuration();
-        cfg.configure("hibernate.cfg.xml");
-        factory = cfg.buildSessionFactory();
-        session = factory.openSession();
         t = session.beginTransaction();
         session.save(profile);
         t.commit();
+        session.flush();
 
 
         //session = factory.openSession();
@@ -203,22 +154,19 @@ public class Get {
 
         t.commit();
         session.flush();
-        session.close();
+        session.clear();
     }
 
     public static void deleteProfile(Long profileID) {
         Profile profile;
-        Configuration cfg = new Configuration();
-        cfg.configure("hibernate.cfg.xml");
-        SessionFactory factory = cfg.buildSessionFactory();
-        Session session = factory.openSession();
-        Transaction t = session.beginTransaction();
+        t = session.beginTransaction();
         profile = (Profile)session.get(Profile.class, profileID);
         if(profile != null) {
             session.delete(profile);
         }
         t.commit();
-        session.close();
+        session.flush();
+        session.clear();
     }
 
 
@@ -277,23 +225,16 @@ public class Get {
 
         result.append("\n\n");
         result.append("Did you hear some interesting things? I encourage you to open BuzzTalk, drill down and find the details you need.");
+        session.flush();
+        session.clear();
+
         return result.toString();
     }
 
     private static String getEventTemplate(String eventName, String profileName) {
-        Configuration cfg;
-        SessionFactory factory;
-        Transaction t;
-        Session session;
         String result;
         Query query;
-
-        cfg = new Configuration();
-        cfg.configure("hibernate.cfg.xml");// populates the data of the
-        factory = cfg.buildSessionFactory();
-        session = factory.openSession();
         t = session.beginTransaction();
-
         query = session.createSQLQuery("SELECT t.event_text"
                 + " FROM events e, templates t, profiles p"
                 + " WHERE t.profile_id = p.profile_id and t.event_id = e.event_id"
@@ -301,7 +242,9 @@ public class Get {
                 .setParameter("profile", profileName);
         result = (String)query.list().get(0);
         t.commit();
-        session.close();
+        session.flush();
+        session.clear();
+
         return result;
     }
 
@@ -522,20 +465,14 @@ public class Get {
 
     public static List<String> listOrderedEvents()
     {
-        Session sessions = null;
         List<String> results;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        try {
-            sessions = sessionFactory1.openSession();
-            transaction = sessions.beginTransaction();
-            transaction.setTimeout(5);
-            Query query =  sessions.createSQLQuery("select event from PUBLICATION group by event order by count(event) desc");
-            results = query.list();
-            transaction.commit();
-        } finally {
-            sessions.close();
-        }
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select event from PUBLICATION group by event order by count(event) desc");
+        results = query.list();
+        t.commit();
+        session.flush();
+        session.clear();
 
         return results;
     }
@@ -544,17 +481,12 @@ public class Get {
     public static Integer GetReportWeeks() {
         Date publishDate = null;
         Date nowDate = null;
-        Session sessions;
         SimpleDateFormat simpleDateFormat;
         List<String> dates;
-        Transaction transaction;
-        SessionFactory sessionFactory1;
-        sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
+        t = session.beginTransaction();
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX", Locale.ENGLISH);
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select publishDate from Publication");
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select publishDate from Publication");
         dates = query.list();
 
         for(String dateString : dates) {
@@ -562,63 +494,57 @@ public class Get {
             try {
                 publishDate = simpleDateFormat.parse(dateString);
             } catch (ParseException e) {
-                transaction.commit();
-                sessions.close();
+                t.commit();
+                session.flush();
                 return -1;
             }
         }
 
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return Weeks.weeksBetween(new DateTime(publishDate), new DateTime(nowDate)).getWeeks();
     }
 
     public static List<String> GetTopHeadlines(int number, String eventName) {
-        Session sessions;
         List<String> results;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select title from PUBLICATION"
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select title from PUBLICATION"
                 + " where event = '" + eventName
                 + "' group by title order by count(title) desc limit " + number);
         results = query.list();
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return results;
     }
 
     public static String GetTopEvent(int position)
     {
         String result;
-        Session sessions = null;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select event from PUBLICATION group by event order by count(event) desc");
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select event from PUBLICATION group by event order by count(event) desc");
         result = (String)query.list().get(position - 1);
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
         return result;
     }
 
     public static String GetEventsNumber()
     {
         String result;
-        Session sessions = null;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select count(name) from events");
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select count(name) from events");
         result = query.list().get(0).toString();
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return result;
     }
 
@@ -626,13 +552,9 @@ public class Get {
     {
         String result;
         List resultList;
-        Session sessions = null;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select count(o.name) from OPENCALAISTAG o"
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select count(o.name) from OPENCALAISTAG o"
                 + " INNER JOIN PUBLICATIONTAGS pt ON o.id = pt.opencalaistag_id"
                 + " INNER JOIN PUBLICATION p ON p.pk = pt.publication_pk"
                 + " where o.category like 'Company' and p.event = '" + eventName
@@ -643,8 +565,10 @@ public class Get {
         } else {
             result = resultList.get(0).toString();
         }
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return result;
     }
 
@@ -656,180 +580,162 @@ public class Get {
     public static List<String> GetTopTechnologies(int number, String eventName)
     {
         List results;
-        Session sessions = null;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select o.name from OPENCALAISTAG o"
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select o.name from OPENCALAISTAG o"
                 + " INNER JOIN PUBLICATIONTAGS pt ON o.id = pt.opencalaistag_id"
                 + " INNER JOIN PUBLICATION p ON p.pk = pt.publication_pk"
                 + " where o.category like 'Technology' and p.event = '" + eventName
                 + "' group by o.name order by count(o.name) limit "+ number);
         results = query.list();
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return results;
     }
 
     public static List<String> GetTopEventTags(int number, String eventName)
     {
         List results;
-        Session sessions = null;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select o.name from OPENCALAISTAG o"
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select o.name from OPENCALAISTAG o"
             + " INNER JOIN PUBLICATIONTAGS pt ON o.id = pt.opencalaistag_id"
             + " INNER JOIN PUBLICATION p ON p.pk = pt.publication_pk"
             + " where o.category like 'Event' and p.event = '" + eventName
             + "' group by o.name order by count(o.name) desc limit "+ number);
         results = query.list();
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return results;
     }
 
     public static List<String> GetTopCities(int number, String eventName)
     {
         List results;
-        Session sessions = null;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select o.name from OPENCALAISTAG o"
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select o.name from OPENCALAISTAG o"
                 + " INNER JOIN PUBLICATIONTAGS pt ON o.id = pt.opencalaistag_id"
                 + " INNER JOIN PUBLICATION p ON p.pk = pt.publication_pk"
                 + " where o.category like 'City' and p.event = '" + eventName
                 + "' group by o.name order by count(o.name) desc limit "+ number);
         results = query.list();
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return results;
     }
 
     public static List<String> GetTopPersons(int number, String eventName)
     {
         List results;
-        Session sessions = null;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select o.name from OPENCALAISTAG o"
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select o.name from OPENCALAISTAG o"
                 + " INNER JOIN PUBLICATIONTAGS pt ON o.id = pt.opencalaistag_id"
                 + " INNER JOIN PUBLICATION p ON p.pk = pt.publication_pk"
                 + " where o.category like 'Person' and p.event = '" + eventName
                 + "' group by o.name order by count(o.name) desc limit "+ number);
         results = query.list();
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return results;
     }
 
     public static List<String> GetTopMedicalConditions(int number, String eventName)
     {
         List results;
-        Session sessions = null;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select o.name from OPENCALAISTAG o"
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select o.name from OPENCALAISTAG o"
                 + " INNER JOIN PUBLICATIONTAGS pt ON o.id = pt.opencalaistag_id"
                 + " INNER JOIN PUBLICATION p ON p.pk = pt.publication_pk"
                 + " where o.category like 'MedicalCondition' and p.event = '" + eventName
                 + "' group by o.name order by count(o.name) desc limit "+ number);
         results = query.list();
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return results;
     }
 
     public static List<String> GetTopPositions(int number, String eventName)
     {
         List results;
-        Session sessions = null;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select o.name from OPENCALAISTAG o"
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select o.name from OPENCALAISTAG o"
                 + " INNER JOIN PUBLICATIONTAGS pt ON o.id = pt.opencalaistag_id"
                 + " INNER JOIN PUBLICATION p ON p.pk = pt.publication_pk"
                 + " where o.category like 'Position' and p.event = '" + eventName
                 + "' group by o.name order by count(o.name) desc limit " + number);
         results = query.list();
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return results;
     }
 
     public static List<String> GetTopOrganizations(int number, String eventName)
     {
         List results;
-        Session sessions = null;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select o.name from OPENCALAISTAG o"
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select o.name from OPENCALAISTAG o"
                 + " INNER JOIN PUBLICATIONTAGS pt ON o.id = pt.opencalaistag_id"
                 + " INNER JOIN PUBLICATION p ON p.pk = pt.publication_pk"
                 + " where o.category like 'Organization' and p.event = '" + eventName
                 + "' group by o.name order by count(o.name) desc limit " + number);
         results = query.list();
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return results;
     }
 
     public static List<String> GetTopCompanies(int number, String eventName)
     {
         List results;
-        Session sessions = null;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select o.name from OPENCALAISTAG o"
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select o.name from OPENCALAISTAG o"
                 + " INNER JOIN PUBLICATIONTAGS pt ON o.id = pt.opencalaistag_id"
                 + " INNER JOIN PUBLICATION p ON p.pk = pt.publication_pk"
                 + " where o.category like 'Company' and p.event = '" + eventName
                 + "' group by o.name order by count(o.name) desc limit "+ number);
         results = query.list();
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return results;
     }
 
     public static List GetTopIndustryTerms(int number, String eventName)
     {
         List results;
-        Session sessions = null;
-        Transaction transaction;
-        SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
-        sessions = sessionFactory1.openSession();
-        transaction = sessions.beginTransaction();
-        transaction.setTimeout(5);
-        Query query =  sessions.createSQLQuery("select o.name from OPENCALAISTAG o"
+        t = session.beginTransaction();
+        t.setTimeout(5);
+        Query query =  session.createSQLQuery("select o.name from OPENCALAISTAG o"
                 + " INNER JOIN PUBLICATIONTAGS pt ON o.id = pt.opencalaistag_id"
                 + " INNER JOIN PUBLICATION p ON p.pk = pt.publication_pk"
                 + " where o.category like 'IndustryTerm' and p.event = '" + eventName
                 + "' group by o.name order by count(o.name) desc limit "+ number);
         results = query.list();
-        transaction.commit();
-        sessions.close();
+        t.commit();
+        session.flush();
+        session.clear();
+
         return results;
     }
 }
