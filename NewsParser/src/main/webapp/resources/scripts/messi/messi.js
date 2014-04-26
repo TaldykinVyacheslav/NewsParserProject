@@ -114,7 +114,7 @@ Messi.prototype = {
     buttons: [],                             // array of buttons, i.e: [{id: 'ok', label: 'OK', val: 'OK'}]
     callback: null,                          // callback function after close message
     center: true,                            // center message on screen
-    closeButton: true,                       // show close button in header title (or content if buttons array is empty).
+    closeButton: false,                      // show close button in header title (or content if buttons array is empty).
     height: 'auto',                          // content height
     title: null,                             // message title
     titleClass: null,                        // title style: info, warning, success, error
@@ -201,7 +201,7 @@ Messi.prototype = {
     if (this.visible) this.hide();
     jQuery(window).unbind('resize', function () { this.resize(); });
     this.messi.remove();
-  },
+  }
 
 };
 
@@ -222,7 +222,7 @@ jQuery.extend(Messi, {
     
     var buttons = [
       {id: 'yes', label: 'Yes', val: 'Y', "class": 'btn-success'},
-      {id: 'no', label: 'No', val: 'N', "class": 'btn-danger'},
+      {id: 'no', label: 'No', val: 'N', "class": 'btn-danger'}
     ];
     
     options = jQuery.extend({closeButton: false, modal: true, buttons: buttons, callback:function() {}}, options || {}, {show: true, unload: true, callback: callback});
@@ -242,7 +242,7 @@ jQuery.extend(Messi, {
     
       jQuery(img).css({width: this.width * ratio, height: this.height * ratio});
       
-      options = jQuery.extend(options || {}, {show: true, unload: true, closeButton: true, width: this.width * ratio, height: this.height * ratio, padding: 0});
+      options = jQuery.extend(options || {}, {show: true, unload: true, closeButton: false, width: this.width * ratio, height: this.height * ratio, padding: 0});
       new Messi(img, options);
     
     }).error(function() {

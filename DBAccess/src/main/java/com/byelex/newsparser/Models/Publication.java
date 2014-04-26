@@ -23,6 +23,7 @@ public class Publication {
     private Long reach;
     private Integer noteId;
     private String event;
+    private String reportId;
     private Set<Publicationtags> publicationtags;
 
     @Column(name = "NoteID")
@@ -107,6 +108,15 @@ public class Publication {
 
     public void setPublicationtags(Set<Publicationtags> publicationtags) {
         this.publicationtags = publicationtags;
+    }
+
+    @Column(name = "report_id")
+    public String getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(String reportId) {
+        this.reportId = reportId;
     }
 
     @Override

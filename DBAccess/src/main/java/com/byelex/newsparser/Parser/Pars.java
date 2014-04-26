@@ -58,8 +58,9 @@ public class Pars {
         this.filesToUse.clear();
     }
 
-    public void getXmlFromServiceUsingUrls() throws IOException, XMLStreamException {
+    public void getXmlFromServiceUsingUrls(String reportId) throws IOException, XMLStreamException {
         //Insert.clearAllTables();
+        Insert.isNewRefresh = true;
         for(Map.Entry<String, String> urlEntry: urlsList.getListOfUrls().entrySet()){
             String eventName = urlEntry.getKey();
             String url = urlEntry.getValue();
@@ -100,7 +101,7 @@ public class Pars {
             //Извлечение файлов .xml из архива "outfile.zip" закончено.
 
             //Чтение xml файлов и сохранение в базу данных
-            for(String nameFileToUse: getFilesToUse()){
+            for(String nameFileToUse: getFilesToUse()) {
                 XMLInputFactory factory = XMLInputFactory.newInstance();
                 XMLStreamReader reader = factory.createXMLStreamReader(new BufferedInputStream(new FileInputStream(nameFileToUse)));
                 String s, tagContent = null;
@@ -123,6 +124,7 @@ public class Pars {
                             } else if (s.equals("publication")){
                                // System.out.println("Publication"); /////////////////////////Проверка на правильность работы////////////////////////////////////////////////
                                 publication = new Publication();
+                                publication.setReportId(reportId);
                             } else if (s.equals("openCalaisTagIds")){
                                 openCalaisTagIds = new ArrayList();
                             } else if (s.equals("tagId")){
@@ -175,6 +177,7 @@ public class Pars {
                 Insert.InsertTerms(data.getOpenCalaisTags());
                 Insert.InsertDocs(data.getPublications(), eventName);
                 Insert.InsertPubTags(data.getPublicationtag());
+                Insert.isNewRefresh = false;
                 addFileToDelete(nameFileToUse);   //добавляем в список на удаление
             }
             clearFileToUse();
@@ -188,6 +191,8 @@ public class Pars {
             clearFileToDelete();
             //Удаление из списка на удаление завершено
         }
+
+        Insert.clearNullPublicationTags();
     }
 }
 

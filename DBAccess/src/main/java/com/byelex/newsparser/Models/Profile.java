@@ -10,12 +10,13 @@ import java.util.Set;
  * @version 1.00 14.03.14 0:24
  */
 @Entity
-@Table(name = "PROFILES")
+@Table(name = "profiles")
 public class Profile {
 
     private Long id;
     private String name;
     private String text;
+    private String reportId;
     private List<Template> templates;
 
     public Profile() {
@@ -38,7 +39,7 @@ public class Profile {
         this.id = id;
     }
 
-    @Column(name = "NAME")
+    @Column(name = "name")
     public String getName() {
         return name;
     }
@@ -47,8 +48,17 @@ public class Profile {
         this.name = name;
     }
 
+    @Column(name = "report_id")
+    public String getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(String reportId) {
+        this.reportId = reportId;
+    }
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "PROFILE_ID")
+    @JoinColumn(name = "profile_id")
     public List<Template> getTemplates() {
         //Collections.sort(templates);
         return templates;

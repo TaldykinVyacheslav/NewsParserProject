@@ -1,0 +1,59 @@
+<c:if test="${!empty urlMap}">
+            <%
+                List<Event> eventList = (List<Event>)request.getAttribute("eventsList");
+                Map<String, String> urlMap = (Map<String, String>) request.getAttribute("urlMap");
+                Map<String, String> sortedUrlMap = new HashMap<String, String>();
+                Set<String> itemMapSet = urlMap.keySet();
+                List<String> itemMapList = new ArrayList<String>();
+                String reportName = (String)request.getAttribute("reportName");
+                itemMapList.addAll(itemMapSet);
+
+                // SORTING BY STRING LENGTH
+                int j;
+                boolean flag = true;   // set flag to true to begin first pass
+                String temp;   //holding variable
+                String currentItem, currentUrl;
+
+                while ( flag )
+                {
+                    flag= false;    //set flag to false awaiting a possible swap
+                    for( j=0;  j < itemMapList.size() -1;  j++ )
+                    {
+                        if ( itemMapList.get(j).length() < itemMapList.get(j+1).length() )   // change to > for ascending sort
+                        {
+                            temp = itemMapList.get(j);                //swap elements
+                            itemMapList.set(j, itemMapList.get(j+1));
+                            itemMapList.set(j+1, temp);
+                            flag = true;              //shows a swap occurred
+                        }
+                    }
+                }
+
+                for(String item : itemMapList) {
+                    sortedUrlMap.put(item, urlMap.get(item));
+                }
+
+                for(String item : itemMapList) {
+                    currentUrl = urlMap.get(item);
+                    currentItem = item;
+                    currentItem = currentItem.replace("\"", "");
+                    //
+                    if(currentItem != null) {
+            %>
+            document.getElementById('outputTextArea').innerHTML = document.getElementById( 'outputTextArea').innerHTML.split("<%=currentItem%>").join("<a  href=\"" +  "<%=currentUrl%>" + "\">" + "<%=currentItem.replace("{[", "").replace("]}", "")%>" + "</a>")
+            <%
+                    }
+                }
+                for(Event event : eventList) {
+            %>
+            document.getElementById('outputTextArea').innerHTML = document.getElementById( 'outputTextArea').innerHTML.split("<%=event.getName().replace("&", "&amp;")%>").join("<i><b>" +  "<%=event.getName().replace("&", "&amp;")%>" + "</b></i>");
+            <%
+                }
+           %>
+            document.getElementById('outputTextArea').innerHTML = document.getElementById( 'outputTextArea').innerHTML.split("<%=reportName.replace("&", "&amp;")%>").join("<b><u>" + "<%=reportName.replace("&", "&amp;").replace("{[", "").replace("]}", "")%>" + "</u></b>");
+            /*document.getElementById('outputTextArea').innerHTML = document.getElementById( 'outputTextArea').innerHTML.split("Fraud &amp; Forgery").join("<i><b>" +  "Fraud &amp; Forgery" + "</b></i>");
+             document.getElementById('outputTextArea').innerHTML = document.getElementById( 'outputTextArea').innerHTML.split("Visits &amp; Talks").join("<i><b>" +  "Visits &amp; Talks" + "</b></i>");*/
+            </c:if>
+            //document.getElementById('outputTextArea').innerHTML = document.getElementById( 'outputTextArea').innerHTML.split("Amsterdam").join("<a href=\"http://vk.com/feed\">Amsterdam</a>");
+
+            //speak($("#outputTextAreaShadow").val(), { speed: 170 , pitch: 25, wordgap: 7 });

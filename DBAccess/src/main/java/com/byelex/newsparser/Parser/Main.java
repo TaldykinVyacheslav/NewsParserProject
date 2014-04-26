@@ -46,7 +46,7 @@ public class Main {
         pars.getUrlsList().addUrlToListOfUrls("http://widget.opinionmining.nl/bt-api-uni/dependency?buzzreport_uid=df42a5dd-6d69-4870-80d2-005062acb391&buzzevent_name=Robbery", "Robbery");
         pars.getUrlsList().addUrlToListOfUrls("http://widget.opinionmining.nl/bt-api-uni/dependency?buzzreport_uid=df42a5dd-6d69-4870-80d2-005062acb391&buzzevent_name=Criticism", "Criticism");
         pars.getUrlsList().addUrlToListOfUrls("http://widget.opinionmining.nl/bt-api-uni/dependency?buzzreport_uid=df42a5dd-6d69-4870-80d2-005062acb391&buzzevent_name=Conflict", "Conflict");
-        */pars.getXmlFromServiceUsingUrls();
+        *///pars.getXmlFromServiceUsingUrls();
         //Testing references
         //System.out.println(Get.GetPublication().get(0).getPublicationtags().iterator().next().getOpencalaistags().iterator().next().getCategory());
         /*Map<String, String> reportMap = Get.createReport();
@@ -54,8 +54,8 @@ public class Main {
             System.out.println(reportEvent.getKey() + " : " + reportEvent.getValue());
         }*/
 
-        System.out.println(Arrays.toString(Get.GetTopPersons(5, "Criticism").toArray()));
-        System.out.println("Yap!");
+        //System.out.println(Arrays.toString(Get.GetTopPersons(5, "Criticism", reportID).toArray()));
+        //System.out.println("Yap!");
     }
 
 }

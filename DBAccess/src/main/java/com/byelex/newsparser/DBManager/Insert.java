@@ -14,6 +14,8 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class Insert {
+    public static boolean isNewRefresh = false;
+
     public static void InsertDocs(ArrayList<Publication> pubs, String eventName) {
         Session sessions = null;
         Transaction transaction = null;
@@ -49,7 +51,7 @@ public class Insert {
     public static void InsertTerms(ArrayList<Opencalaistag> tags) {
         Session sessions = null;
         Transaction transaction;
-        try{
+        try {
             SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
             sessions = sessionFactory1.openSession();
             for(Opencalaistag tag :tags)
@@ -76,17 +78,41 @@ public class Insert {
         try {
             SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
             sessions = sessionFactory1.openSession();
+            transaction = sessions.beginTransaction();
             for(Publicationtags pt : pubtags) {
                 try {
-                    transaction = sessions.beginTransaction();
+                    //opencalaistag_id = null [Id]
+                    if(isNewRefresh) {
+                        sessions.createQuery("delete from Publicationtags").executeUpdate();
+                    }
                     transaction.setTimeout(5);
                     sessions.saveOrUpdate(pt);
-                    transaction.commit();
                 } catch (Exception ex) {
                     continue;
                 }
             }
+            transaction.commit();
+
+            System.out.println("PUBLICATIONTAGS SIZE IS " + pubtags.size());
             System.out.println("success");
+        }
+        catch(Exception ex) {
+            ;
+        }
+        finally {
+            sessions.close();
+        }
+    }
+
+    public static void clearNullPublicationTags() {
+        Session sessions = null;
+        Transaction transaction;
+        try {
+            SessionFactory sessionFactory1 = new Configuration().configure().buildSessionFactory();
+            sessions = sessionFactory1.openSession();
+            transaction = sessions.beginTransaction();
+            sessions.createSQLQuery("delete from publicationtags where opencalaistag_id is null").executeUpdate();
+            transaction.commit();
         }
         catch(Exception ex) {
             ;

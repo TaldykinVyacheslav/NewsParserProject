@@ -9,7 +9,7 @@ import java.util.Set;
  * @version 1.00 23.03.14 21:20
  */
 @Entity
-@Table(name = "EVENTS")
+@Table(name = "events")
 public class Event {
 
     private Long id;
@@ -26,7 +26,7 @@ public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "EVENT_ID")
+    @Column(name = "event_id")
     public Long getId() {
         return id;
     }

@@ -11,7 +11,7 @@ import javax.persistence.Table;
  * @version 1.00 23.03.14 21:20
  */
 @Entity
-@Table(name = "TOKENS")
+@Table(name = "tokens")
 public class Token {
 
     private Long id;
@@ -28,7 +28,7 @@ public class Token {
     }
 
     @Id
-    @Column(name = "ID")
+    @Column(name = "id")
     public Long getId() {
         return id;
     }
@@ -46,7 +46,7 @@ public class Token {
         this.name = name;
     }
 
-    @Column(name = "COMPLEX")
+    @Column(name = "complex")
     public Boolean getComplex() {
         return isComplex;
     }

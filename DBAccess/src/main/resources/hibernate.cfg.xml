@@ -20,5 +20,6 @@
         <mapping class="com.byelex.newsparser.Models.Token"/>
         <mapping class="com.byelex.newsparser.Models.Event"/>
         <mapping class="com.byelex.newsparser.Models.Template"/>
+        <mapping class="com.byelex.newsparser.Models.Report"/>
     </session-factory>
 </hibernate-configuration>

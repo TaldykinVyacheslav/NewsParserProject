@@ -1,65 +1,5 @@
 <%--
   User: Taldykin V.S.
-  Date: 31.01.14
-  Time: 13:38
---%>
-
-<!--
-Начнем с каталога <Home page>
-В данном случае Слава используй для редактирования страницу "Profiles settings.jsp"
-Блок <head> ... </head> если правильно помню копируй полностью с заменой( если хочешь можешь проверить и построчно добавлять и удалять скрипты и стили)
-
-Блок <body>:
-В блок <div id="#templateScript"> ... </div> вроде я брал у тебя и он находился в начале странице оставляй его.
-
-Появляется новый блок
-<nav class="navbar navbar-inverse text-center"> ... </nav>
-Копиру его и вставляй вместо
-<h6>Profile settings</h6>
-В этом блоке <nav>...</nav> проверь ссылку на главную страницу у меня ее нет добавь, и еще в конце твоего файла будет
-блок <div id="homePage"> </div> удаляем его безвозвратно, т.к. ссылка будет в <nav> панели
-
-Идем дальше
-19:54:30
-
-Alexander
-Дальше делаем так чтобы не сильно тебе замарачиваться копируешь весь блок
-<div class="container-fluid"> ... </div>
-и заменяешь им <div class="center">...</div> блок
-и еще подключение скриптов в моем коде которое идет в конце добавь в свой блок <body>...</body> ТОЖЕ В КОНЕЦ.
-
-так теперь короче так
-находишь блоки
-1. <select multiple size="7" id="profileSelect" class="settingSelect form-control" for="addLink" name="profileID">...</select>
-2.<a id="addLink" ..... , <a id="deleteLink" .... , <a id="editLink" .....
-3. <textarea id="outputTextAreaShadow" >
-4. <textarea id="outputTextArea" class="text-left" readonly="" style="vertical-align: middle; min-height: 30%; min-width: 80%; max-width: 80%; overflow: auto" >
-5. <div id="audio" class="text-center">
-
-И делаешь с ними следующее(сейчас будет использоваться нумерация определенная ранее и описания что надо изменить добавить):
-1. Заменяешь на свою выборку select, т.е. копируешь все что
-<select multiple size="7" id="profileSelect" class="settingSelect form-control"
-for="addLink" name="profileID">...</select> находится вместо троеточия в код
-
-2. Замени ссылки на те которые будут работать
-3,4,5 сделать тоже что и в первом пункте замени то какие данные будут выводиться
-20:08:16
-✌ вот с первой страницой я и закончил 😎 ✌
-
-Alexander
-Страница <add.edit page>
-Короче как и на предыдущей странице копируешь <head>...</head> и подключение js файлов конце блока <body>
-
-Так тут делаешь так заменяешь весть блок
-<table id="staticPanel">
-на
-мой блок <div style="height: 80px;" >...</div>
--->
-
-
-
-<%--
-  User: Taldykin V.S.
   Date: 16.03.14
   Time: 22:17
 --%>
@@ -75,12 +15,16 @@ Alexander
     <script src="./Profiles settings_files/jquery-latest.min.js"></script>
     <script src="./index_files/speakClient.js"></script>
     <script type="text/javascript" src="/resources/js/jQuery.js"></script>
+    <link rel="stylesheet" href="/resources/scripts/messi/messi.css" />
+    <script src="/resources/scripts/messi/messi.js"></script>
     <script>
         $(document).ready(function() {
-            document.getElementById( 'outputTextAreaShadow' ).style.visibility = 'hidden';
-            $("#outputTextArea").height($("#outputTextArea")[0].scrollHeight);
-            speak($("#outputTextAreaShadow").val(), { speed: 150 , pitch: 50, wordgap: 1 });
-
+            $( "#editForm" ).submit(function(event) {
+                if($("#nameInput").val().trim().length == 0) {
+                    new Messi('You cannot save profile with empty name', {title: 'Error', titleClass: 'anim error', buttons: [{id: 0, label: 'Close', val: 'X'}], modal: true});
+                    event.preventDefault();
+                }
+            });
         });
 
         function adaptiveheight(a) {
@@ -95,98 +39,103 @@ Alexander
     <style type="text/css">
         body
         {
-            background: url(/resources/images/background4.jpg); /* Параметры фона */
+            background: url(/resources/images/background4.jpg) fixed; /* Параметры фона */
         }
     </style>
 </head>
 <body>
-<div style="height: 80px;" >
-    <nav  class="navbar navbar-inverse text-center">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Home page</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#" style="color: #ffffff">News parser</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ol class="nav navbar-nav">
-                <li><a href="/" ><strong>Home page</strong></a></li>
-                <li  class="active" ><a href="#" ><strong>Edit profile</strong></a></li>
-            </ol>
+<form:form id="editForm"  method="POST" cssStyle="min-height: 100%; max-height: 100%; min-width: 100%; max-width: 100%" commandName="edit-profile-form.html" modelAttribute="profile" action="/edit/${profileID}">
+    <nav  class="navbar navbar-inverse text-center navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Home page</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand"  style="color: #ffffff">News parser</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ol class="nav navbar-nav">
+                    <li><a href="/" ><strong>Home page</strong></a></li>
+                    <li  class="active" ><a ><strong>Edit profile</strong></a></li>
+                </ol>
+                <div class="navbar-form nav navbar-nav navbar-right">
+                    <input style="" id="SumSubmit" type="submit" value="Save profile">
+                </div>
+            </div>
         </div>
     </nav>
-</div>
-<form:form method="POST" commandName="edit-profile-form.html" modelAttribute="profile" action="/edit/${profileID}">
-
-    <table class="table">
-        <thead>
-        <tr >
-            <div class="input-group col-xs-4">
-                <span class="input-group-addon">Name</span>
-                <form:input id="nameInput" path="name" name="name" placeholder="Enter profile name" />
-            </div>
-        </tr>
-        </thead>
-    </table>
-    <table class="table">
-        <thead>
-        <tr>
-            <div class="input-group col-xs-8">
-                <span class="input-group-addon">Introduction</span>
-                <c:forEach items="${profile.templates}" var="templateVar" varStatus="status">
-                    <c:if test="${templateVar.event.name == 'Intro'}">
-                        <td><textarea style="height: 30px;min-height: 150px;" id="templateArea" placeholder="Template text" name="templates[${status.index}].eventText" class="form-control">${templateVar.eventText}</textarea></td>
-                    </c:if>
-                </c:forEach>
-            </div>
-        </tr>
-        </thead>
-    </table>
-    <div class="input-group-sm col-xs-6 pre-scrollable">
-        <span id="name" class="input-group-addon">Available tokens</span>
-        <table id="eventTemplate" class="table table-hover form-control " border="2" style="background-color: #ffffff">
-            <thead>
-            <tr>
-                <td id="tokenName" class="col-sm-3 "><strong>Name of token</strong></td>
-                <td id="tokenDescription" class="form-control "><strong>Description</strong></td>
-            </tr>
-            </thead>
-            <tbody>
-            <c:forEach items="${tokenList}" var="templateVar" varStatus="status">
-                <tr>
-                    <td>${templateVar.name}</td>
-                    <td>${templateVar.description}</td>
-                </tr>
-            </c:forEach>
-            </tbody>
-        </table>
-    </div>
-    <div id="content" class="col-xs-6 pre-scrollable">
-        <table style="background-color: #ffffff" class="table table-hover small" id="tableEvent" border="2">
-            <thead>
-            <tr>
-                <th id="Event" class="col-xs-3"><strong>Event</strong></th>
-                <th id="Template"><strong>Template</strong></th>
-            </tr>
-            </thead>
-            <tbody>
+    <div class="container-fluid" style=" position: relative; top: 60px; min-height: 200px; max-height: 200px; min-width: 100%; max-width: 100%;">
+        <div class="input-group" style="position: absolute; top: 0; left: 50%; min-width:40%; max-width: 40%;">
+            <span class="input-group-addon">Report</span>
+            <select name="reportID" style="min-height: 60px;" id="reportSelect" class="settingSelect form-control" for="addLink">
+                <c:if test="${!empty reportList}">
+                    <c:forEach items="${reportList}" var="reportVar">
+                        <c:choose>
+                            <c:when test="${reportVar.id == selectedReportID}">
+                                <option value="${reportVar.id}" selected>${reportVar.name}</option>
+                            </c:when>
+                            <c:otherwise>
+                                <option value="${reportVar.id}">${reportVar.name}</option>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                </c:if>
+            </select>
+        </div>
+        <div class="input-group" style="position: absolute; top: 0; left: 5%; min-width:40%; max-width: 40%;">
+            <span class="input-group-addon">Name</span>
+            <form:input id="nameInput" path="name" cssClass="form-control" style="min-height: 60px;" name="name" placeholder="Enter profile name" />
+        </div>
+        <div class="input-group" style="position: absolute; top: 70px; left: 15%; min-width:70%; max-width: 70%;" >
+            <span class="input-group-addon">Introduction</span>
             <c:forEach items="${profile.templates}" var="templateVar" varStatus="status">
-                <c:if test="${templateVar.event.name != 'Intro'}">
-                    <tr>
-                        <td>${templateVar.event.name}</td>
-                        <td><textarea style="width: 100%; height: 100%" name="templates[${status.index}].eventText" placeholder="template text">${templateVar.eventText}</textarea></td>
-                    </tr>
+                <c:if test="${templateVar.event.name == 'Intro'}">
+                    <textarea  style="max-height: 300px; min-height: 200px; min-width:825px; max-width: 825px;"  id="templateArea" placeholder="Template text" name="templates[${status.index}].eventText" class="form-control">${templateVar.eventText}</textarea>
                 </c:if>
             </c:forEach>
-            <tr>
-                <td><input style="" id="SumSubmit" type="submit" value="Save profile"></td>
-                <td></td>
-            </tr>
-            </tbody>
-        </table>
+        </div>
+        <div  style="position: absolute; top: 376px; left: 61%; min-width:35%; max-width: 35%;" >
+            <table id="eventTemplate" class="table table-hover form-control " border="2" style="background-color: #ffffff">
+                <thead>
+                <tr>
+                    <td id="tokenName" style="max-width: 223px; min-width: 223"><strong>Name of token</strong></td>
+                    <td id="tokenDescription" class="form-control "><strong>Description</strong></td>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach items="${tokenList}" var="templateVar" varStatus="status">
+                    <tr>
+                        <td>${templateVar.name}</td>
+                        <td>${templateVar.description}</td>
+                    </tr>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
+        <div  style="position: absolute; top: 376px; left: 30px; min-width:55%; max-width: 55%;">
+            <table style="background-color: #ffffff" class="table table-hover small" id="tableEvent" border="2">
+                <thead>
+                <tr>
+                    <th id="Event" class="col-xs-3"><strong>Event</strong></th>
+                    <th id="Template"><strong>Template</strong></th>
+                </tr>
+                </thead>
+                <tbody>
+                <c:forEach items="${profile.templates}" var="templateVar" varStatus="status">
+                    <c:if test="${templateVar.event.name != 'Intro'}">
+                        <tr>
+                            <td>${templateVar.event.name}</td>
+                            <td><textarea style="width: 537px; height: 200px; min-width: 537px; min-height: 90px; max-width: 537px;" name="templates[${status.index}].eventText" placeholder="template text">${templateVar.eventText}</textarea></td>
+                        </tr>
+                    </c:if>
+                </c:forEach>
+                </tbody>
+            </table>
+        </div>
+
     </div>
 </form:form>
 

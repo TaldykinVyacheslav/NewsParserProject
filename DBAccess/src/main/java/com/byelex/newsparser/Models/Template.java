@@ -9,7 +9,7 @@ import javax.persistence.*;
  * @version 1.00 23.03.14 23:05
  */
 @Entity
-@Table(name = "TEMPLATES")
+@Table(name = "templates")
 public class Template implements Comparable<Template>{
 
     private Long id;
@@ -31,7 +31,7 @@ public class Template implements Comparable<Template>{
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @GenericGenerator(name="generator", strategy="increment")
     @GeneratedValue(generator="generator")
-    @Column(name = "ID", nullable = false)
+    @Column(name = "id", nullable = false)
     public Long getId() {
         return id;
     }
@@ -51,7 +51,7 @@ public class Template implements Comparable<Template>{
     }
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "PROFILE_ID")
+    @JoinColumn(name = "profile_id")
     public Profile getProfile() {
         return profile;
     }
@@ -60,7 +60,7 @@ public class Template implements Comparable<Template>{
         this.profile = profile;
     }
 
-    @Column(name = "EVENT_TEXT")
+    @Column(name = "event_text")
     public String getEventText() {
         return eventText;
     }
