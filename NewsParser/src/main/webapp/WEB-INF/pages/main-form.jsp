@@ -1,3 +1,5 @@
+<%@ page import="java.util.*" %>
+<%@ page import="com.byelex.newsparser.Models.Event" %>
 <%--
   User: Taldykin V.S.
   Date: 31.01.14
@@ -7,6 +9,7 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <html>
 
 <head>
@@ -14,7 +17,7 @@
     <title>News parser</title>
     <link href="/resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="/resources/css/bootstrap.css" rel="stylesheet">
-    <script src="/resources/scripts/speak/speakClient.js"></script>
+    <%--<script src="/resources/scripts/speak/speakClient.js"></script>--%>
     <script type="text/javascript" src="/resources/js/jQuery.js"></script>
     <link rel="stylesheet" href="/resources/scripts/messi/messi.css" />
     <script src="/resources/scripts/messi/messi.js"></script>
@@ -23,8 +26,73 @@
         $(document).ready(function() {
             display_hide('#textAreaWithAudio');
             document.getElementById( 'outputTextAreaShadow' ).style.visibility = 'hidden';
-            //$("#outputTextArea").height($("#outputTextArea")[0].scrollHeight);
-            speak($("#outputTextAreaShadow").val(), { speed: 150 , pitch: 50, wordgap: 1 });
+            document.getElementById( 'outputTextArea').innerHTML = $("#outputTextAreaShadow").val().split("\n").join("<br/>");
+            document.getElementById( 'outputTextAreaShadow').innerHTML = $("#outputTextAreaShadow").val().split("]}").join("");
+            document.getElementById( 'outputTextAreaShadow').innerHTML = $("#outputTextAreaShadow").val().split("{[").join("");
+
+            var item, url;
+            <c:if test="${!empty urlMap}">
+            <%
+                List<Event> eventList = (List<Event>)request.getAttribute("eventsList");
+                Map<String, String> urlMap = (Map<String, String>) request.getAttribute("urlMap");
+                Map<String, String> sortedUrlMap = new HashMap<String, String>();
+                Set<String> itemMapSet = urlMap.keySet();
+                List<String> itemMapList = new ArrayList<String>();
+                String reportName = (String)request.getAttribute("reportName");
+                itemMapList.addAll(itemMapSet);
+
+                // SORTING BY STRING LENGTH
+                int j;
+                boolean flag = true;   // set flag to true to begin first pass
+                String temp;   //holding variable
+                String currentItem, currentUrl;
+
+                while ( flag )
+                {
+                    flag= false;    //set flag to false awaiting a possible swap
+                    for( j=0;  j < itemMapList.size() -1;  j++ )
+                    {
+                        if ( itemMapList.get(j).length() < itemMapList.get(j+1).length() )   // change to > for ascending sort
+                        {
+                            temp = itemMapList.get(j);                //swap elements
+                            itemMapList.set(j, itemMapList.get(j+1));
+                            itemMapList.set(j+1, temp);
+                            flag = true;              //shows a swap occurred
+                        }
+                    }
+                }
+
+                for(String item : itemMapList) {
+                    sortedUrlMap.put(item, urlMap.get(item));
+                }
+
+                for(String item : itemMapList) {
+                    currentUrl = urlMap.get(item);
+                    currentItem = item;
+                    currentItem = currentItem.replace("\"", "");
+                    currentItem = currentItem.replace("\'", "");
+                    currentItem = currentItem.replace("\n", "");
+                    //
+                    if(currentItem != null) {
+            %>
+            document.getElementById('outputTextArea').innerHTML = document.getElementById( 'outputTextArea').innerHTML.split("<%=currentItem%>").join("<a target=\"_blank\" href=\"" +  "<%=currentUrl%>" + "\">" + "<%=currentItem.replace("{[", "").replace("]}", "")%>" + "</a>")
+            <%
+                    }
+                }
+                for(Event event : eventList) {
+            %>
+            document.getElementById('outputTextArea').innerHTML = document.getElementById( 'outputTextArea').innerHTML.split("<%=event.getName().replace("&", "&amp;")%>").join("<i><b>" +  "<%=event.getName().replace("&", "&amp;")%>" + "</b></i>");
+            <%
+                }
+           %>
+            document.getElementById('outputTextArea').innerHTML = document.getElementById( 'outputTextArea').innerHTML.split("<%=reportName.replace("&", "&amp;")%>").join("<b><u>" + "<%=reportName.replace("&", "&amp;").replace("{[", "").replace("]}", "")%>" + "</u></b>");
+            /*document.getElementById('outputTextArea').innerHTML = document.getElementById( 'outputTextArea').innerHTML.split("Fraud &amp; Forgery").join("<i><b>" +  "Fraud &amp; Forgery" + "</b></i>");
+            document.getElementById('outputTextArea').innerHTML = document.getElementById( 'outputTextArea').innerHTML.split("Visits &amp; Talks").join("<i><b>" +  "Visits &amp; Talks" + "</b></i>");*/
+            </c:if>
+            //document.getElementById('outputTextArea').innerHTML = document.getElementById( 'outputTextArea').innerHTML.split("Amsterdam").join("<a href=\"http://vk.com/feed\">Amsterdam</a>");
+
+            //speak($("#outputTextAreaShadow").val(), { speed: 170 , pitch: 25, wordgap: 7 });
+
         });
 
         function adaptiveheight(a) {
@@ -42,22 +110,21 @@
         function display_hide (blockId)
         {
             <c:if test="${!empty resultText}">
+            var curPos=$(document).scrollTop();
+            var height=700;
+            var scrollTime=(height-curPos)/1.73;
+            $("body,html").animate({"scrollTop":height},scrollTime);
             $(blockId).animate({height: 'show'}, 500);
-            document.getElementById("audio").innerHTML=("<br/><div id=\"block_1\" style=\"margin-left: 45%;\" class=\"barlittle\"></div>"
-            + "<div id=\"block_2\" style=\"margin-left: 10px;\" class=\"barlittle\"></div>"
-            + "<div id=\"block_3\" style=\"margin-left: 10px;\" class=\"barlittle\"></div>"
-            + "<div id=\"block_4\" style=\"margin-left: 10px;\" class=\"barlittle\"></div>"
-            + "<div id=\"block_5\" style=\"margin-left: 10px;\" class=\"barlittle\"></div>");
             </c:if>
         }
     </script>
     <style type="text/css">
         body
         {
-            background: url(/resources/images/background4.jpg) no-repeat; /* Параметры фона */
+            background: url(/resources/images/background4.jpg) fixed; /* Параметры фона */
         }
     </style>
-    <style>
+    <%-- <style>
         .barlittle {
             background-color: #2187e7;
             background-image: -moz-linear-gradient(45deg, #2187e7 25%, #a0eaff);
@@ -125,7 +192,7 @@
                 opacity: 0.1;
             }
         }
-    </style>
+    </style>--%>
 </head>
 <body>
 <div id="#templateScript">
@@ -136,6 +203,10 @@
             editLink.href = editLink.href.substring(0, editLink.href.lastIndexOf('edit/') + 5) + $("#profileSelect").val() + '/';
             deleteLink.href = deleteLink.href.substring(0, deleteLink.href.lastIndexOf('delete/') + 7) + $("#profileSelect").val() + '/';
 
+
+//Необходимо прокрутить в конец страницы
+
+
             $("#profileSelect").on('change', function (e) {
                 var editLink = document.getElementById("editLink");
                 var deleteLink = document.getElementById("deleteLink");
@@ -143,22 +214,51 @@
                 //alert(editLink.href);
                 deleteLink.href = deleteLink.href.substring(0, deleteLink.href.lastIndexOf('delete/') + 7) + $("#profileSelect").val() + '/';
             });
-
             $( "#deleteLink" ).click(function(e) {
                 if($("#profileSelect").val() == 1) {
                     //alert('A!');
                     e.preventDefault();
-                    new Messi('You cannot delete this profile', {title: 'Error', titleClass: 'anim error', buttons: [{id: 0, label: 'Close', val: 'X'}]});
+                    new Messi('You cannot delete this profile', {title: 'Error', titleClass: 'anim error', buttons: [{id: 0, label: 'Close', val: 'X'}], modal: true});
                 }
             });
 
-            $('#command').submit(function(){
-                $('#voiceSearchButton').prop("disabled",true);
+            var submitActor = null;
+            var $form = $( '#command' );
+            var $submitActors = [$( '#voiceSearchButton' ), $( '#reportRefreshButton' )];
+
+            $form.submit( function( event )
+            {
+                if ( null === submitActor )
+                {
+                    // If no actor is explicitly clicked, the browser will
+                    // automatically choose the first in source-order
+                    // so we do the same here
+                    //submitActor = $submitActors[0];
+                    alert('Null!');
+                } else {
+                    if(submitActor.name == 'voiceSearch') {
+                        new Messi('Loading report, please wait.', {title: 'Loading', titleClass: 'anim warning', modal: true});
+                    } else {
+                        new Messi('Refreshing database, please wait.', {title: 'Loading', titleClass: 'anim warning', modal: true});
+                    }
+                }
+
+            });
+
+            $( '#voiceSearchButton').click(function( event )
+            {
+                submitActor = this;
+            });
+
+            $( '#reportRefreshButton' ).click( function( event )
+            {
+                submitActor = this;
             });
         });
     </script>
 </div>
-<nav class="navbar navbar-inverse text-center">
+<form:form method="GET" id="command" cssStyle="min-height: 100%; max-height: 100%; min-width: 100%; max-width: 100%"  commandName="main-form.html" action="/search" >
+<nav class="navbar navbar-inverse text-center navbar-fixed-top">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">News parser</span>
@@ -166,69 +266,68 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#" style="color: white">News parser</a>
+        <a class="navbar-brand" style="color: white">News parser</a>
     </div>
     <div class="navbar-collapse collapse">
         <ol class="nav navbar-nav">
             <li  class="active" ><a href="#" ><strong>Home page</strong></a></li>
         </ol>
+        <ol class="nav navbar-nav navbar-right">
+            <li  style="right: 20;"><a style="color: white" href=<c:url value="/refresh"/>  id="reportRefreshButton" ><strong>Refresh report</strong></a></li>
+        </ol>
     </div>
 </nav>
-<table id="allInTable">
-    <div class="container-fluid">
-        <form:form method="GET" id="command" commandName="main-form.html" action="/search" >
-            <div >
-                <div class="input-group col-md-12 text-center">
-                    <span class="input-group-addon ">Profile</span>
-                    <select name="profileID" multiple size="7" id="profileSelect" class="settingSelect form-control" for="addLink">
-                        <c:if test="${!empty profileList}">
-                            <c:forEach items="${profileList}" var="profileVar">
-                                <c:choose>
-                                    <c:when test="${profileVar.id == selectedProfileID}">
-                                        <option value="${profileVar.id}" selected>${profileVar.name}</option>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <option value="${profileVar.id}">${profileVar.name}</option>
-                                    </c:otherwise>
-                                </c:choose>
-                            </c:forEach>
-                        </c:if>
-                    </select>
-                </div>
-
-                <div class="col-md-12 text-center form-inline " style="height: 100px;">
-                    <div class="col-md-5">
-                        <a id="addLink" class="form-inline" href=<c:url value="/add"/>>
-                            <img src="/resources/images/plus-darck.png" alt="Add profile" title="Add profile" width="90" height="90">
-                        </a>
-                    </div>
-                    <div class="col-md-2 text-center">
-                        <a id="deleteLink" class="form-inline" href=<c:url value="/delete/1"/>>
-                            <img src="/resources/images/minus-darck.png" alt="Remove profile" title="Remove profile" width="90" height="90">
-                        </a>
-                    </div>
-                    <div class="col-md-5">
-                        <a id="editLink" class="form-inline" href=<c:url value="/edit/1"/>>
-                            <img src="/resources/images/tools-darck.png" alt="Edit profile" title="Edit profile" width="90" height="90">
-                        </a>
-                    </div>
-                </div>
-                <div class="center-block  col-md-12 text-center" style="bottom: 0; height: 100px" >
-                    <button style="width: 180px; height: 60px;"  id="voiceSearchButton" name="voiceSearch" class=" btn btn-lg btn-default text-center" <%--onclick="display_hide('#textAreaWithAudio'); /*return false;*/"--%>>
-                        Get report!
-                    </button>
-                </div>
-                <div id="textAreaWithAudio" style= "display: none;" class="col-md-13 col-md-pull-1">
-                    <textarea   id="outputTextAreaShadow" >${resultText}</textarea>
-                    <textarea   id="outputTextArea" class="text-left" readonly="readonly" style="vertical-align: middle; min-height: 30%; min-width: 80%;  max-width: 80%; overflow: auto" >${resultText}</textarea>
-                    <div id="audio" class="text-center"></div>
-                </div>
-            </div>
-        </form:form>
+    <div class="container-fluid" style=" background-image: url(/resources/images/background3.jpg); position: relative; top: 100px; min-height: 200px; max-height: 200px; min-width: 80%; max-width: 80%;">
+        <div class="input-group" style="position: absolute; top: 30; left: 90; min-width:45%; max-width: 45%;">
+            <span class="input-group-addon ">Profile</span>
+            <select name="profileID" style="min-height: 60px;" id="profileSelect" class="settingSelect form-control" for="addLink">
+                <c:if test="${!empty profileList}">
+                    <c:forEach items="${profileList}" var="profileVar">
+                        <c:choose>
+                            <c:when test="${profileVar.id == selectedProfileID}">
+                                <option value="${profileVar.id}" selected>${profileVar.name}</option>
+                            </c:when>
+                            <c:otherwise>
+                                <option value="${profileVar.id}">${profileVar.name}</option>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                </c:if>
+            </select>
+        </div>
+        <a id="addLink" style="right: 60; top: 10; position: absolute;" class="form-inline" href=<c:url value="/add"/>>
+            <img src="/resources/images/plus-darck.png" alt="Add profile" title="Add profile" width="60" height="60">
+        </a>
+        <a id="deleteLink" style="right: 60; top: 140; position: absolute;" class="form-inline" href=<c:url value="/delete/1"/>>
+            <img src="/resources/images/minus-darck.png" alt="Remove profile" title="Remove profile" width="60" height="60">
+        </a>
+        <a id="editLink" style="right: 60; top: 74; position: absolute;" class="form-inline" href=<c:url value="/edit/1"/>>
+            <img src="/resources/images/tools-darck.png" alt="Edit profile" title="Edit profile" width="60" height="60">
+        </a>
+       <div class="input-group" style="position: absolute;  bottom: 7%;left: 20%;min-width: 35%;max-width: 35%;">
+           <a href="#headerLink">
+                <input name="voiceSearch" type="submit" class="btn btn-lg btn-default text-center" for="addLink" value="Get report!" style="width: 150px; height: 50px;"  id="voiceSearchButton"  />
+           </a>
+       </div>
     </div>
-</table>
+    <div id="headerLink"  style="position: absolute; top: 300px; left: 10%; max-width: 80%; min-width: 80%; right: 10%; min-height: 80%">
+        <div id="textAreaWithAudio" style= "display: none;">
+            <h1 class="page-header text-center col-md-12" style="padding-top: 3%; background-image: url(/resources/images/background3.jpg); color: #ffffff;">Report</h1>
+            <textarea id="outputTextAreaShadow" >${resultText}</textarea>
+            <div  id="outputTextArea" class="text-left" readonly="readonly" style="vertical-align: middle; background-color: #ffffff; min-height: 100%; min-width: 100%;  max-width: 100%; overflow: auto" >${resultText}</div>
+            <c:if test="${!empty resultText}">
+                <div id="audio" class="text-center">
+                    <audio controls="controls" autoplay="autoplay">
+                        <source src="${mp3Uri}" type="audio/mpeg" />
+                    </audio>
+                </div>
+            </c:if>
+        </div>
+    </div>
+</form:form>
 <script src="http://code.jquery.com/jquery-latest.js"></script>
 <script src="/resources/js/bootstrap.min.js"></script>
 <script src="/resources/js/bootstrap.js"></script>
+
 </body>
 </html>
