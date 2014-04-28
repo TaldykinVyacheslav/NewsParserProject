@@ -597,11 +597,13 @@ public class Get {
         Query query =  session.createSQLQuery("select publishDate from publication where report_id = :reportID");
         query.setString("reportID", reportID);
         dates = query.list();
+        publishDate = new Date();
 
         for(String dateString : dates) {
-            nowDate = new Date();
             try {
-                publishDate = simpleDateFormat.parse(dateString);
+                if(publishDate.after(simpleDateFormat.parse(dateString))) {
+                    publishDate = simpleDateFormat.parse(dateString);
+                }
             } catch (ParseException e) {
                 t.commit();
                 session.flush();
@@ -609,6 +611,7 @@ public class Get {
             }
         }
 
+        nowDate = new Date();
         t.commit();
         session.flush();
         session.clear();

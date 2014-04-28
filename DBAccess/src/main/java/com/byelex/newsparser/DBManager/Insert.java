@@ -24,15 +24,6 @@ public class Insert {
             sessions = sessionFactory1.openSession();
             for(Publication pub : pubs)
             {
-                List<Publication> publicationFound;
-                Query query = sessions.createQuery("from Publication where pk = :pk");
-                query.setParameter("pk", pub.getPk());
-                publicationFound = query.list();
-                if(!publicationFound.isEmpty()) {
-                    transaction = sessions.beginTransaction();
-                    sessions.delete(publicationFound.get(0));
-                    transaction.commit();
-                }
                 pub.setEvent(eventName);
                 transaction = sessions.beginTransaction();
                 transaction.setTimeout(5);
